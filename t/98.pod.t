@@ -1,6 +1,5 @@
-#!perl -T
+#!perl -wT
 # Syntax check the POD documentation
-# $Id: 98.pod.t,v 1.3 2005/04/24 17:29:07 Robert May Exp $
 use strict;
 use warnings;
 

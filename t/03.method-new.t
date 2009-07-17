@@ -1,5 +1,5 @@
+#!perl -w
 # Check that the module's new method is OK
-# $Id: 03.method-new.t,v 1.3 2005/04/24 17:29:07 Robert May Exp $
 use strict;
 use warnings;
 
@@ -12,8 +12,7 @@ use warnings;
 
   my $callback = sub {};
 
-  my $parent = Win32::GUI::Window->new(
-  );
+  my $parent = Win32::GUI::Window->new();
 
   my $text = 'http://www.perl.org';
 
@@ -94,32 +93,31 @@ ok($obj->{-onMouseOut} == $callback, "MouseOut event callback stored");
   #                              2 - always underline, 3 - error
   sub underline_state
   {
-    if (defined $obj->{_u_font_ref}) {
-      if(defined $obj->{_hNfont} and defined $obj->{_hUfont}) {
+      my ($o) = @_;
+    if (defined $o->{_u_font_ref}) {
+      if(defined $o->{_hNfont} and defined $o->{_hUfont}) {
         return 1;
       } 
-      if(!defined $obj->{_hNfont} and !defined $obj->{_hUfont}) {
+      if(!defined $o->{_hNfont} and !defined $o->{_hUfont}) {
         return 2;
       }
       return 3;
     } else {
-      if(defined $obj->{_hNfont} or defined $obj->{_hUfont}) {
+      if(defined $o->{_hNfont} or defined $o->{_hUfont}) {
         return 3;
       }
       return 0;
     }
   }
 
-  # DEFAULT: underline should default to hover if Win32::API available, always underlined if not
+  # DEFAULT: underline should default to hover
   $obj = undef;
   $obj = Win32::GUI::HyperLink->new(
     $parent,
     -url => $text,
   );
 
-ok( (( !$hasWin32API and undederline_state() == 2)
-       or ($hasWin32API and underline_state() == 1) ), "Default underline style");
-  diag "As you don't have Win32::API, underline on hover becomes underline always" if !$hasWin32API;
+is( underline_state($obj), 1, "Default underline style");
 
   # SET NO UNDERLINE:
   $obj = undef;
@@ -129,7 +127,7 @@ ok( (( !$hasWin32API and undederline_state() == 2)
     -underline => 0,
   );
 
-ok( underline_state() == 0, "Never underline");
+is( underline_state($obj), 0, "Never underline");
 
   # SET underline on hover - results as per default
   $obj = undef;
@@ -139,8 +137,7 @@ ok( underline_state() == 0, "Never underline");
     -underline => 1,
   );
 
-ok( (( !$hasWin32API and undederline_state() == 2)
-       or ($hasWin32API and underline_state() == 1) ), "underline on hover");
+is( underline_state($obj), 1, "underline on hover");
 
   # SET underline always
   $obj = undef;
@@ -150,12 +147,7 @@ ok( (( !$hasWin32API and undederline_state() == 2)
     -underline => 2,
   );
 
-ok( underline_state() == 2, "Always underline");
-
-# early version of Win32::GUI don't have GetEvent
-SKIP: {
-
-    skip "Win32::GUI $Win32::GUI::VERSION does not have GetEvent().", 2 unless Win32::GUI->can('GetEvent');
+is( underline_state($obj), 2, "Always underline");
 
     # check that a provided onClick handler is set
     $obj = undef;
@@ -178,4 +170,3 @@ SKIP: {
     );
 
   ok($obj->GetEvent("MouseMove") == $callback, "override MouseMove handler set");
-}

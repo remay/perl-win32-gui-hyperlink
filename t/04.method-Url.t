@@ -1,5 +1,5 @@
+#!perl -w
 # Check that the module's Url method is OK
-# $Id: 04.method-Url.t,v 1.3 2005/04/24 17:29:07 Robert May Exp $
 use strict;
 use warnings;
 
@@ -7,8 +7,7 @@ use Test::More tests => 5;
 
 use Win32::GUI::Hyperlink;
 
-my $parent = Win32::GUI::Window->new(
-);
+my $parent = Win32::GUI::Window->new();
 
 my $text = 'http://www.perl.org';
 

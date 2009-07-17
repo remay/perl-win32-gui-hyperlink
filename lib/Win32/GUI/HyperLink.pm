@@ -3,7 +3,8 @@ package Win32::GUI::HyperLink;
 use warnings;
 use strict;
 
-use Win32::GUI 1.02;  # 1.02 required for LoadCursor, ShellExecute and GetCapture
+use Win32::GUI 1.02 qw();
+  # 1.02 required for LoadCursor, ShellExecute and GetCapture
 use base qw(Win32::GUI::Label);
 
 =head1 NAME
@@ -12,7 +13,7 @@ Win32::GUI::HyperLink - A Win32::GUI Hyperlink control
 
 =cut
 
-our $VERSION = 0.13;
+our $VERSION = 0.14;
 
 =head1 SYNOPSIS
 
@@ -266,6 +267,7 @@ sub new
     delete $options{-url};
   }
   $storage{-url} = "" if not defined $storage{-url};
+  $options{-text} = "" if not defined $options{-text};
 
   # colour
   $options{-foreground} = [0,0,255] if not exists $options{-foreground};  # default is blue
@@ -423,7 +425,7 @@ sub Launch
   # Only try to open the link if it is actually defined
   if($self->Url()) {
     $retval = 1;
-    my $exitval = $self->ShellExecute("",$self->Url(),"","",SW_SHOWNORMAL) if ($_has_shellexecute & API_HAS_WIN32GUI);
+    my $exitval = $self->ShellExecute("",$self->Url(),"","",SW_SHOWNORMAL);
     if ($exitval <= 32) {
         require Carp;
         Carp::carp "Failed opening ".$self->Url()." ShellExecute($exitval) $^E";

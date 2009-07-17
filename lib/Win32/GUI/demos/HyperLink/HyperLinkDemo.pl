@@ -1,13 +1,12 @@
+#!perl -w
 # Demo on how to use Win32::GUI::HyperLink
-#
-# $Id: HyperLinkDemo.pl,v 1.3 2005/04/24 17:29:07 Robert May Exp $
 #
 # See the Win32::GUI::HyperLink POD documents for further
 # Information
 #
-# Author: Robert May - rmay@popeslane.clara.co.uk
+# Author: Robert May - robertmay@cpan.org
 #
-# Copyright (C) 2005 Robert May
+# Copyright (C) 2005..2009 Robert May
 #
 # This script is free software; you can redistribute it and/or modify
 # it under the same terms as Perl itself.
@@ -16,11 +15,7 @@
 use strict;
 use warnings;
 
-use Win32::GUI;
-#use Win32::GUI 1.0;
-
-# The next line is for testing, and should be commented out in distributions
-#use lib qw(../../../..);
+use Win32::GUI 1.02 qw(MB_OK MB_ICONASTERISK);
 use Win32::GUI::HyperLink;
 
 # Some useful constants
@@ -35,9 +30,9 @@ my $title = "HyperLink Demo";
 # A menu
 my $Menu = Win32::GUI::MakeMenu(
   "&File"             => "File",
-	"   > E&xit"        => { -onClick => sub { -1; } },
+	"   > E&xit"        => { -onClick => sub { -1; }, -name => "Exit" },
   "&Help"             => "Help",
-	"   > &About ..."   => { -onClick => \&AboutWindow },
+	"   > &About ..."   => { -onClick => \&AboutWindow, -name => "About" },
 );
 
 # A window with a menu
@@ -57,7 +52,7 @@ my $status = $mw->AddStatusBar(
 
 # Simplest usage
 my $hl1 = $mw->AddHyperLink(
-	-text => "http://www.robmay.me.uk/win32gui/",
+	-text => "http://rob.themayfamily.me.uk/perl/win32-gui/",
 	-pos => [10,10],
 );
 
@@ -66,7 +61,7 @@ my $hl1 = $mw->AddHyperLink(
 # into the status bar.  Never underlined.
 my $hl2 = $mw->AddHyperLink(
   -text => "HyperLink.pm webpage",
-  -url => "http://www.robmay.me.uk/win32gui/",
+  -url => "http://rob.themayfamily.me.uk/perl/win32-gui/win32-gui-hyperlink",
 	-foreground => CL_RED,
 	-pos => [10,30],
 	-onMouseIn => \&setStatus,
@@ -105,8 +100,8 @@ exit(0);
 sub AboutWindow
 {
 	$mw->MessageBox("Demonstration of Win32::GUI::HyperLink v".Win32::GUI::HyperLink->VERSION()."\r\n".
-		"Based on Win32::GUI v". Win32::GUI->VERSION(). "\r\n".
-		'By Robert May - rmay@popeslane.clara.co.uk.',
+		"Running on Win32::GUI v". Win32::GUI->VERSION(). "\r\n".
+		'By Robert May - robertmay@cpan.org',
 		"About $title",
 		MB_OK|MB_ICONASTERISK,
 	);

@@ -1,7 +1,9 @@
 # Check that the module's new method is OK
-# $Id: 03.method-new.t,v 1.2 2005/03/01 01:31:43 Robert May Exp $
+# $Id: 03.method-new.t,v 1.3 2005/04/24 17:29:07 Robert May Exp $
+use strict;
+use warnings;
 
-  use Test::More tests => 19;
+  use Test::More tests => 16;
 
   use Win32::GUI::Hyperlink;
   my $hasWin32API = defined $Win32::API::VERSION; # WIn32::GUI loaded if available by HyperLink
@@ -150,38 +152,30 @@ ok( (( !$hasWin32API and undederline_state() == 2)
 
 ok( underline_state() == 2, "Always underline");
 
-  # check that onClick handler is set
-  $obj = undef;
-  $obj = Win32::GUI::HyperLink->new(
-    $parent,
-    -url => $text,
-  );
+# early version of Win32::GUI don't have GetEvent
+SKIP: {
 
-ok(defined $obj->GetEvent("Click"), "Click handler set");
+    skip "Win32::GUI $Win32::GUI::VERSION does not have GetEvent().", 2 unless Win32::GUI->can('GetEvent');
 
-  # check that onMouseMove handler is set
-ok(defined $obj->GetEvent("MouseMove"), "MouseMove handler set");
+    # check that a provided onClick handler is set
+    $obj = undef;
+    $callback = sub {};
+    $obj = Win32::GUI::HyperLink->new(
+      $parent,
+      -url => $text,
+      -onClick => $callback,
+    );
 
-  # check that an overriden onClick handler is set
-  $obj = undef;
-  $callback = sub {};
-  $obj = Win32::GUI::HyperLink->new(
-    $parent,
-    -url => $text,
-    -onClick => $callback,
-  );
+  ok($obj->GetEvent("Click") == $callback, "override Click handler set");
 
-ok($obj->GetEvent("Click") == $callback, "override Click handler set");
+    # check that a provided onMouseMove handler is set
+    $obj = undef;
+    $callback = sub {};
+    $obj = Win32::GUI::HyperLink->new(
+      $parent,
+      -url => $text,
+      -onMouseMove => $callback,
+    );
 
-  # check that an overridden onMouseMove handler gets stored
-  $obj = undef;
-  $callback = sub {};
-  $obj = Win32::GUI::HyperLink->new(
-    $parent,
-    -url => $text,
-    -onMouseMove => $callback,
-  );
-
-ok($obj->{-onMouseMove} == $callback, "override MouseMove handler stored");
-ok(!($obj->GetEvent("MouseMove") == $callback), "override MouseMove handler is not actual handler");
-
+  ok($obj->GetEvent("MouseMove") == $callback, "override MouseMove handler set");
+}

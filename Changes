@@ -1,7 +1,21 @@
 Revision history for Win32-GUI-HyperLink
 
+0.13     24 Aprl 2005
+         Released on CPAN, and at http://www.robmay.me.uk/win32gui/
+         as PPM
+
+ - Corrected name of Hyperlink.pm to HyperLink.pm
+ - Changed some private 'my' subs to regular subs to allow sub-classing
+   to work properly.
+ - Used Hook() to call event handlers, so that it works with both OEM
+   and NEM.
+ - Modified MouseIn and MouseOut event handlers to work with OEM.
+ - Modified the way that API calls missing in Win32::GUI are checked,
+   and only fallback to Win32::API when absolutely necessary
+ - Updated the documentation.
+
 0.12     28 February 2005
-         Released on CPAN, and at Http://www.robmay.me.uk/win32gui/
+         Released on CPAN, and at http://www.robmay.me.uk/win32gui/
          as PPM
 
  - Removed left-over debug print statements
@@ -49,4 +63,4 @@ Revision history for Win32-GUI-HyperLink
         Original version available on perl-win32-gui-users list
 
 ----------------------------------------------------------------------
-$Id: Changes,v 1.2 2005/03/01 01:31:21 Robert May Exp $
+$Id: Changes,v 1.3 2005/04/24 17:29:06 Robert May Exp $

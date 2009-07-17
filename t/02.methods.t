@@ -1,5 +1,7 @@
 # Check that the module has the public methods that we are expecting
-# $Id: 02.methods.t,v 1.2 2005/03/01 01:31:43 Robert May Exp $
+# $Id: 02.methods.t,v 1.3 2005/04/24 17:29:07 Robert May Exp $
+use strict;
+use warnings;
 
 use Test::More tests => 1;
 

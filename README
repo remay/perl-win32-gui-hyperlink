@@ -3,7 +3,7 @@ Win32-GUI-HyperLink
 
 VERSION
 
-This is Win32::GUI::HyperLink v0.12
+This is Win32::GUI::HyperLink v0.13
 
 INTRODUCTION
 
@@ -16,7 +16,7 @@ The Label can be clicked to launch a hyperlink.
 
 REQUIRES
 
-Win32::GUI v1.0 or higher
+Win32::GUI v0.99_1 or higher
 Win32::API for full functionality - currently you lose the ability to
   have the text of the label dynamically underlined when the mouse is
   over the link if you don't have this module.
@@ -54,4 +54,4 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 ----------------------------------------------------------------------
-$Id: README,v 1.3 2005/03/01 02:21:53 Robert May Exp $
+$Id: README,v 1.4 2005/04/24 17:29:07 Robert May Exp $

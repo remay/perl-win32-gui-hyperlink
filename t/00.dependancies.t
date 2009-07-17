@@ -1,9 +1,12 @@
 # Win32::GUI::HyperLink dependancies check
-# $Id: 00.dependancies.t,v 1.2 2005/03/01 01:31:42 Robert May Exp $
+# $Id: 00.dependancies.t,v 1.3 2005/04/24 17:29:07 Robert May Exp $
+use strict;
+use warnings;
 
 use Test::More tests => 3;
 
-eval { use Win32::GUI 1.0 };
+#eval { use Win32::GUI 1.0 };
+eval { use Win32::GUI };
 eval { use Win32::GUI::BitmapInline 0.02 };
 eval { use Win32::API };
 

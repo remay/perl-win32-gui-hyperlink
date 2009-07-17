@@ -1,6 +1,6 @@
 # Demo on how to use Win32::GUI::HyperLink
 #
-# $Id: HyperLinkDemo.pl,v 1.2 2005/03/01 01:31:42 Robert May Exp $
+# $Id: HyperLinkDemo.pl,v 1.3 2005/04/24 17:29:07 Robert May Exp $
 #
 # See the Win32::GUI::HyperLink POD documents for further
 # Information
@@ -16,8 +16,12 @@
 use strict;
 use warnings;
 
-use Win32::GUI 1.0;
-use Win32::GUI::HyperLink 0.1;
+use Win32::GUI;
+#use Win32::GUI 1.0;
+
+# The next line is for testing, and should be commented out in distributions
+#use lib qw(../../../..);
+use Win32::GUI::HyperLink;
 
 # Some useful constants
 sub CL_RED()    {0x0000FF}; # Red
@@ -26,7 +30,7 @@ sub UL_NEVER()  {0};        # Never underline link
 sub UL_HOVER()  {1};        # underline link when the mouse is over the link (this is the default)
 sub UL_ALWAYS() {2};        # Always underline link
 
-my $title = "Hyperlink Demo";
+my $title = "HyperLink Demo";
 
 # A menu
 my $Menu = Win32::GUI::MakeMenu(
@@ -44,6 +48,7 @@ my $mw = Win32::GUI::Window->new(
 	-size => [ 240, 200 ],
   -resizable =>0,       # As I don't want to bother with re-drawing here!
   -maximizebox =>0,     # Ditto.
+  -onTerminate => sub {-1},
 );
 
 # A status bar, where will might display the link information
@@ -126,7 +131,7 @@ sub unsetStatus
   my $self = shift;
 
   # An example of how the onMouseOut handler can be used to
-  # change the window when the muse leaves the link area:
+  # change the window when the mouse leaves the link area:
   # in this case clearing the status bar text
   $status->Text("");
 

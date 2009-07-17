@@ -1,15 +1,14 @@
 TODO:
-- Allow usage of OEM callbacks without having to pass
-    -eventmodel => "both"
-- carp if onMouseIn/Out specified and no GetCapture?
+- MouseOut event alreay exists (MouseOver, MouseOut) for TrackMouse()
 - Test suit should be extended to test the GUI itself.  Perhaps with
   Win32::GUITest?
-- prepare for later (and earlier?) releases of Win32::GUI by testing
-  for the functions we want: UNIVERSAL->can()
-- Make this work with versions of Win32::GUI that don't support NEM?
+- Is it possible to only load Win32::API if we actually need it?
+- Where should we warn about missing functionality?  Module itself
+  or test suite or at installation.  Test and installation don't
+  seem good for PPM distributions.
 
 - Can we get CVS to update the VERSION in README file?
 - Add postamble to Makefile.PL to automate make of PPM distribution
 
 ----------------------------------------------------------------------
-$Id: TODO,v 1.3 2005/03/01 02:03:43 Robert May Exp $
+$Id: TODO,v 1.4 2005/04/24 17:29:07 Robert May Exp $

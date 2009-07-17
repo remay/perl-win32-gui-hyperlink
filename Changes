@@ -1,0 +1,36 @@
+Revision history for Win32-GUI-HyperLink
+
+0.11     20 February 2005
+         Released to perl-win32-gui-users for comment
+
+ - Wrote initial test suite
+ - Made API backward compatible with Win32::GUI::Hyperink v0.02
+ - Removed dependency on Win32::API - now we use it for additional
+   functionality if it is available, otherwise we manage without. 
+   ShellExecute() is used if available (as it is faster and cleaner),
+   but we fallback to using 'system start,$url'.  LoadCursor is used
+   is available, but if not we fallback to an inlined cursor. 
+   GetCapture is used if available - if it is not the the dynamic
+   link underlining and onMouseIn/Out calls are not available.
+ - Added fallback cursor using Win32::GUI::BitmapInline, in case
+   we cannot load the default windows cursor for any reason (e.g.
+   we don't have access to Win32::API).  If Win32::GUI::Bitmap::Inline
+   is not available, then we simple don't change the cursor.
+ - Correct VERSION format to x.xx for CPAN modules
+ - removed Set/ReleaseCapture dependency on Win32::API, as these calls
+   are already available in Win32::GUI 1.0
+ - Added Win32::GUI::Window::AddHyperLink function to allow for
+   Win32::GUI's standard $parent->AddControl interface.
+ - Updated demo code to show new AddHyperLink usage
+ - Turned comments into pod documentation, and completed documentation
+
+
+0.10     15 February 2005
+         First version by Robert May announced on perl-win32-gui-users
+         mailing list for comment.
+
+ - Complete re-write of code, original module only came to light after
+   this release.
+
+0.02    2001(?)
+        Original version available on perl-win32-gui-users mailing list

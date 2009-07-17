@@ -1,0 +1,4 @@
+# Build by-products should be ignored
+Makefile
+blib/
+pm_to_blib

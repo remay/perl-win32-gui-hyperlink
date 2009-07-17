@@ -3,7 +3,7 @@ Win32-GUI-HyperLink
 
 VERSION
 
-This is Win32::GUI::HyperLink v0.11
+This is Win32::GUI::HyperLink v0.12
 
 INTRODUCTION
 
@@ -40,6 +40,11 @@ To install this module, run the following commands:
     make test
     make install
 
+Alternatively, as a manual installation, extract the HyperLink.pm file
+from the dirtribution, and put it at C:\Perl\site\lib\Win32\GUI
+(adjust as necessary for your Perl installation directory)
+
+A PPM distribution is available at http://www.robmay.me.uk/win32gui/
 
 COPYRIGHT AND LICENCE
 
@@ -47,3 +52,6 @@ Copyright (C) 2005 Robert May
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
+----------------------------------------------------------------------
+$Id: README,v 1.3 2005/03/01 02:21:53 Robert May Exp $

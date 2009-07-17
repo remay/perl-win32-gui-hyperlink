@@ -1,4 +1,6 @@
 # Check that the module's Launch method is OK
+# $Id: 05.method-Launch.t,v 1.2 2005/03/01 01:31:43 Robert May Exp $
+
 use Test::More tests => 1;
 
 use Win32::GUI::Hyperlink;

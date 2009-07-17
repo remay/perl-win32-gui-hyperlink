@@ -1,3 +1,6 @@
+# Makefile.PL for Win32::GUI::HyperLink
+# $Id: Makefile.PL,v 1.2 2005/03/01 01:31:22 Robert May Exp $
+
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
@@ -11,7 +14,6 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More' => 0,
         'Win32::GUI' => 1.0,
-        'Win32::GUI::BitmapInline' => 0.02,
         'Win32::API' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

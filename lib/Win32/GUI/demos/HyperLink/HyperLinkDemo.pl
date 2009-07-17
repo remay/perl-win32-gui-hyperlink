@@ -1,13 +1,11 @@
-# Demo on how to use HyperLink.pm
-## TODO
-# - demo of behaviour when Win32::API and Win32::GUI::BitmapInline are not available
-
+# Demo on how to use Win32::GUI::HyperLink
+#
+# $Id: HyperLinkDemo.pl,v 1.2 2005/03/01 01:31:42 Robert May Exp $
 #
 # See the Win32::GUI::HyperLink POD documents for further
 # Information
 #
 # Author: Robert May - rmay@popeslane.clara.co.uk
-# 15th February 2005
 #
 # Copyright (C) 2005 Robert May
 #

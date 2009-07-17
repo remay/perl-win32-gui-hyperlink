@@ -1,16 +1,15 @@
 TODO:
-- Allow usage of OEM callbacks without having to pass -eventmodel => "both"
+- Allow usage of OEM callbacks without having to pass
+    -eventmodel => "both"
 - carp if onMouseIn/Out specified and no GetCapture?
-- Update the demo script to show behaviour if Win32::API and Win32::GUI::BitmapInline are not available.
-
-- Replace the tabs with spaces (tab = 4 spaces), so that the layout is not
-  messed up by people with different tabstop settings
-
-- Test suit should be extended to test the GUI itself.  Perhaps with Win32::GUITest?
-- Am I installing the demo script in a suitable location?
-
-- prepare for later (and earlier?) releases of Win32::GUI by testing for the functions we want: UNIVERSAL->can()
+- Test suit should be extended to test the GUI itself.  Perhaps with
+  Win32::GUITest?
+- prepare for later (and earlier?) releases of Win32::GUI by testing
+  for the functions we want: UNIVERSAL->can()
 - Make this work with versions of Win32::GUI that don't support NEM?
 
-- Raise bug reports for the Win32::GUI bugs discovered while
-  preparing this.
+- Can we get CVS to update the VERSION in README file?
+- Add postamble to Makefile.PL to automate make of PPM distribution
+
+----------------------------------------------------------------------
+$Id: TODO,v 1.3 2005/03/01 02:03:43 Robert May Exp $

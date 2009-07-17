@@ -1,4 +1,5 @@
 package Win32::GUI::HyperLink;
+# $Id: Hyperlink.pm,v 1.3 2005/03/01 01:31:42 Robert May Exp $
 
 use warnings;
 use strict;
@@ -13,13 +14,10 @@ use base qw(Win32::GUI::Label);
 
 Win32::GUI::HyperLink - A Win32::GUI Hyperlink control
 
-=head1 VERSION
-
-Version 0.11
-
 =cut
 
-our $VERSION = '0.11';
+#our $VERSION = '0.11';
+our $VERSION = sprintf("%d.%02d", q$Name: REL-0-12 $ =~ /(\d+)-(\d+)/, 999, 99);
 
 =head1 SYNOPSIS
 
@@ -429,14 +427,12 @@ sub Launch
     $retval = 1;
     # Use ShellExecute if it is available else use system start ...
     if(defined $ShellExecute) {
-    print "SE\n";
       my $exitval = $ShellExecute->Call($self->{-handle},"",$self->Url(),"","",SW_SHOWNORMAL);
       if ($exitval <= 32) {
         carp "Failed opening ".$self->Url()." ShellExecute($exitval) $^E";
         $retval = 0;
       }
     } else {
-    print "SS\n";
       my $exitval = system("start", $self->Url());
       if($exitval == -1 || $exitval) {
         carp "Failed opening ".$self->Url()." system(".($exitval>>8).") $^E";
@@ -532,8 +528,8 @@ C<< Use of uninitialized value in subroutine entry at C:/Perl/site/lib/Win32/GUI
 . I can't track this down, but it does not seem to be anything to worry about.
 
 Some interaction with the test harness results in a warning
-c<< Too late to run INIT block at C:/Perl/site/lib/Win32/API/Type.pm line 71. >>
-when running the C<pod-coverage> tests. This does not seem to be a problem.
+C<< Too late to run INIT block at C:/Perl/site/lib/Win32/API/Type.pm line 71. >>
+when running the C<pod-coverage> tests. This also does not seem to be a problem.
 
 The tests do not cover any actual GUI interaction.
 

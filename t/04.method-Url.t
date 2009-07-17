@@ -1,4 +1,6 @@
 # Check that the module's Url method is OK
+# $Id: 04.method-Url.t,v 1.2 2005/03/01 01:31:43 Robert May Exp $
+
 use Test::More tests => 5;
 
 use Win32::GUI::Hyperlink;

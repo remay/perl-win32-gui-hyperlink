@@ -1,11 +1,9 @@
 package Win32::GUI::HyperLink;
-# $Id: HyperLink.pm,v 1.4 2005/04/24 17:29:07 Robert May Exp $
 
 use warnings;
 use strict;
-use Carp;
 
-use Win32::GUI;
+use Win32::GUI 1.02;  # 1.02 required for LoadCursor, ShellExecute and GetCapture
 use base qw(Win32::GUI::Label);
 
 =head1 NAME
@@ -14,7 +12,7 @@ Win32::GUI::HyperLink - A Win32::GUI Hyperlink control
 
 =cut
 
-our $VERSION = sprintf("%d.%02d", q$Name: REL-0-13 $ =~ /(\d+)-(\d+)/, 999, 99);
+our $VERSION = 0.13;
 
 =head1 SYNOPSIS
 
@@ -63,10 +61,6 @@ sub UNDERLINE_NONE  () {0};
 sub UNDERLINE_HOVER () {1};
 sub UNDERLINE_ALWAYS() {2};
 
-sub API_NONE        () {0};
-sub API_HAS_WIN32GUI() {1};
-sub API_HAS_WIN32API() {2};
-
 ######################################################################
 # package global storage
 ######################################################################
@@ -74,52 +68,6 @@ sub API_HAS_WIN32API() {2};
 # we only create one cursor object regardless of how many HyperLink
 # objects we have.  See function _get_hand_cursor().
 our $_hand_cursor = undef;
-our $_has_loadcursor   = API_NONE;
-our $_has_getcapture   = API_NONE;
-our $_has_shellexecute = API_NONE;
-
-######################################################################
-# Some Win32::GUI versions are missing some of the functions that
-# are used - find out which are available, and then try to use
-# Win32::API for those that are not.
-######################################################################
-# LoadCursor   - added after V1.0
-$_has_loadcursor   = API_HAS_WIN32GUI if (Win32::GUI->can('LoadCursor'));
-# GetCapture   - added after V1.0
-$_has_getcapture   = API_HAS_WIN32GUI if (Win32::GUI->can('GetCapture'));
-# ShellExecute - added after V1.0
-$_has_shellexecute = API_HAS_WIN32GUI if (Win32::GUI->can('ShellExecute'));
-
-######################################################################
-# The Win32::API calls we want to make:
-######################################################################
-# Dont load Win32::API unless it is available ...
-BEGIN { eval "use Win32::API"; };
-
-# and try to load the calls we are still missing
-
-my $LoadCursor   = undef;
-my $GetCapture   = undef;
-my $ShellExecute = undef;
-# if Win32::API is available
-if (defined $Win32::API::VERSION) {
-  if($_has_loadcursor == API_NONE) {
-    # HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName);
-    $LoadCursor = Win32::API->new('User32', 'LoadCursor', 'NN', 'N');
-    $_has_loadcursor = API_HAS_WIN32API if(defined($LoadCursor));
-  }
-  if($_has_getcapture == API_NONE) {
-    # HWND GetCapture(VOID);
-    $GetCapture = Win32::API->new("User32","GetCapture", "", "N");
-    $_has_getcapture = API_HAS_WIN32API if(defined($GetCapture));
-  }
-  if($_has_shellexecute == API_NONE) {
-    # HINSTANCE ShellExecute(HWND hwnd, LPCTSTR lpOperation, LPCTSTR lpFile,
-    #      LPCTSTR lpParameters, LPCTSTR lpDirectory, INT nShowCmd);
-    $ShellExecute = Win32::API->new("shell32","ShellExecute", "NPPPPI", "N");
-    $_has_shellexecute = API_HAS_WIN32API if(defined($ShellExecute));
-  }
-}
 
 ######################################################################
 # Private callback functions
@@ -133,12 +81,8 @@ sub _mouse_move
 {
   my ($self, $wparam, $lparam, $type, $msgcode) = @_;
 
-  # Early version of Win32::GUI don't pass type and messagecode
-  return if(defined($type) and $type != 0);
-  return if(defined($msgcode) and $msgcode != WM_MOUSEMOVE);
-
-  # safety check - this handler should never get called if GetCapture() is not available
-  return if($_has_getcapture == API_NONE);
+  return unless $type == 0;
+  return unless $msgcode == WM_MOUSEMOVE;
 
   my $cxM = $lparam & 0xFFFF;         # in client co-ordinates
   my $cyM = ($lparam >> 16) & 0xFFFF; # in client co-ordinates
@@ -162,9 +106,7 @@ sub _mouse_move
   # Based on ideas and code from:
   # http://www.codeguru.com/Cpp/controls/staticctrl/article.php/c5803/ 
   
-  my $getcapture;
-  $getcapture = Win32::GUI::GetCapture() if ($_has_getcapture & API_HAS_WIN32GUI);
-  $getcapture = $GetCapture->Call()      if ($_has_getcapture & API_HAS_WIN32API);
+  my $getcapture = Win32::GUI::GetCapture();
 
   if($getcapture != $hWnd)
   {
@@ -230,9 +172,8 @@ sub _click
 {
   my ($self, $wparam, $lparam, $type, $msgcode) = @_;
 
-  # Early version of Win32::GUI don't pass type and messagecode
-  return if(defined($type) and $type != 0);
-  return if(defined($msgcode) and $msgcode != WM_LBUTTONDOWN);
+  return unless $type == 0;
+  return unless $msgcode == WM_LBUTTONDOWN;
 
   $self->Launch();
   return; # no return value, so not to affect normal operation
@@ -265,25 +206,17 @@ If not supplied will default to B<-text>.
 =item B<-onMouseIn>
 
 A code reference to call when the mouse moves over the link text.
-Do not rely on this being available if your script is run on
-a machine that has early versions of L<Win32::GUI> or does not have
-L<Win32::API> available. See L</"REQUIRES"> for further information.
 
 =item B<-onMouseOut>
 
 A code reference to call when the mouse moves off the link text.
-Do not rely on this being available if your script is run on
-a machine that has early versions of L<Win32::GUI> or does not have
-L<Win32::API> available. See L</"REQUIRES"> for further information.
 
 =item B<-underline>
 
 Controls how the text behaves as the mouse moves over and off the link text.
 Possible values are: B<0> Text is not underlined. B<1> Text is underlined when
 the mouse is over the link text.  This is the default.  B<2> Text is always
-underlined.  On machines with early versions of L<Win32::GUI> or without
-L<Win32::API> available option B<1> may be unavailable.  In this case
-option B<2> becomes the default.  See L</"REQUIRES"> for further information.
+underlined.
 
 =back
 
@@ -339,18 +272,8 @@ sub new
 
   # cursor
   if(not exists $options{-cursor} ) {
-    # Try to load the window standard hand cursor,
-    # if we can't get it for any reason, use our
-    # own ... and if that fails for any reason, don't set one
-    $options{-cursor} = Win32::GUI::LoadCursor(IDC_HAND) if ($_has_loadcursor & API_HAS_WIN32GUI);
-    $options{-cursor} = $LoadCursor->Call(0,IDC_HAND)    if ($_has_loadcursor & API_HAS_WIN32API);
-    if (not defined $options{-cursor}) {
-      $options{-cursor} = _get_hand_cursor();
-      # Store a reference to our Win32::GUI::Cursor in the hash
-      # to prevent descruction: see notes below about doing the same
-      # thing for the Win32::GUI::Font object.
-      $storage{_alt_cursor_ref} = \$options{-cursor} if defined $options{-cursor};
-    }
+    # Try to load the window standard hand cursor
+    $options{-cursor} = Win32::GUI::LoadCursor(IDC_HAND);
     delete $options{-cursor} if not defined $options{-cursor};
   }
 
@@ -360,8 +283,6 @@ sub new
     $underline = $options{-underline};
     delete $options{-underline};
   }
-  # fallback to UNDERLINE_ALWAYS from UNDERLINE_HOVER if we can't do the mouse move handling
-  $underline = UNDERLINE_ALWAYS if(($underline == UNDERLINE_HOVER) and ($_has_getcapture == API_NONE));
 
   # we need -notify, so set it
   $options{-notify} = 1;
@@ -396,7 +317,7 @@ sub new
   # Use WM_LBUTTONDOWN rather than NM_CLICK, as hooking WM_NOTIFY messages
   # is broken in Win32::GUI V1.0 and earlier
   $self->Hook(WM_LBUTTONDOWN, \&_click) if not exists $options{-onClick};
-  $self->Hook(WM_MOUSEMOVE,   \&_mouse_move) if $_has_getcapture;
+  $self->Hook(WM_MOUSEMOVE,   \&_mouse_move);
 
   # If underline == UNDERLINE_NONE(0) do nothing;
   # otherwise make a copy of the label font with underline
@@ -486,10 +407,9 @@ and C<undef> if there is no link url to try to launch.
 C<< Launch() >> passes the value of the link url to the operating
 system, which launches the link in the user's default browser.
 
-If ShellExecute is available (L<Win32::GUI> greater than 1.0, or via
-L<Win32::API>) then the link is passed to the Windows ShellExecute
-function.  If not the link is passed to Windows C<< start(.exe) >>
-command.  In either case any valid executable program
+The link is passed to the Windows ShellExecute
+function, and so
+any valid executable program
 or document that has a file association should be successsfully
 started.
 
@@ -503,21 +423,11 @@ sub Launch
   # Only try to open the link if it is actually defined
   if($self->Url()) {
     $retval = 1;
-    # Use ShellExecute if it is available else use system start ...
-    if($_has_shellexecute) {
-      my $exitval;
-      $exitval = $self->ShellExecute("",$self->Url(),"","",SW_SHOWNORMAL) if ($_has_shellexecute & API_HAS_WIN32GUI);
-      $exitval = $ShellExecute->Call($self->{-handle},"",$self->Url(),"","",SW_SHOWNORMAL) if ($_has_shellexecute & API_HAS_WIN32API);
-      if ($exitval <= 32) {
-        carp "Failed opening ".$self->Url()." ShellExecute($exitval) $^E";
+    my $exitval = $self->ShellExecute("",$self->Url(),"","",SW_SHOWNORMAL) if ($_has_shellexecute & API_HAS_WIN32GUI);
+    if ($exitval <= 32) {
+        require Carp;
+        Carp::carp "Failed opening ".$self->Url()." ShellExecute($exitval) $^E";
         $retval = 0;
-      }
-    } else {
-      my $exitval = system("start", $self->Url());
-      if($exitval == -1 || $exitval) {
-        carp "Failed opening ".$self->Url()." system(".($exitval>>8).") $^E";
-        $retval = 0;
-      }
     }
   }
 
@@ -526,52 +436,11 @@ sub Launch
 
 =head1 AUTHOR
 
-Robert May, C<< <rmay@popeslane.clara.co.uk> >>
-
-Additional information may be available at L<http://www.robmay.me.uk/win32gui/>.
+Robert May, C<< <robertmay@cpan.org> >>
 
 =head1 REQUIRES
 
-L<Win32::GUI> v0.99_1 or later.  The test suite passes at least as far back as
-V0.0.670, and the code runs without errors, but differences in the event processing
-loops means that the main functionality does not work.  If you need this
-functionality with earlier versions of Win32::GUI it is suggested that you use
-Win32::GUI::HyperLink v0.02.  If you make this code work with earlier versions
-of Win32::GUI, please pass your changes back to the author for inclusion.
-
-L<Win32::GUI::BitmapInline>, as distributed with Win32::GUI, will be used
-if Win32::GUI::HyperLink cannot get the system's 'hand' cursor.
-If Win32::GUI::BitmapInline is
-not available in this circumctance, then the cursor will not change when
-hovering over the link.
-
-L<Win32::API>.  May be required for full functionality, depending on
-your version of Win32::GUI.
-
-If you do no have this module
-installed then the dynamic underlining of the link as the mouse moves
-over it may not work, and the MouseIn/Out events may not
-be available.
-
-As at L<Win32::GUI> 1.0 this module requires access to
-LoadCursor, GetCapture and ShellExecute win32 API calls
-that are not part of the Win32::GUI distribution.
-API calls that are not available through
-Win32::GUI are accessed using Win32::API, and if it is
-not available, functionality will be missing:
-
-LoadCursor: if not available then the default 'hand' cursor
-that is used will be one built in to Win32::GUI::HyperLink
-rather than the operating system's default.
-
-GetCapture: if not available, then underlining of the link
-text when the mouse hovers over the link is not available,
-nor are the MouseIn or MouseOut events.
-
-If you need the full functionality without using Win32::API
-the the current CVS HEAD revision of the code has the
-missing functions, and Win32::GUI::HyperLink is coded to use
-them if they exist in the Win32::GUI build.
+L<Win32::GUI> v1.02 or later.
 
 =head1 COMPATABILITY
 
@@ -585,7 +454,7 @@ inform the Author.
   use strict;
   use warnings;
 
-  use Win32::GUI 1.0;
+  use Win32::GUI 1.02;
   use Win32::GUI::HyperLink;
 
   # A window
@@ -611,20 +480,6 @@ See the F<TODO> file from the disribution.
 
 Please report any bugs or feature requests to the Author.
 
-=head2 Bugs with the tests
-
-All tests pass when run with 'prove'.  Some interaction with 'make test' results in the
-following warnings, neither of which are cause for concern.
-
-The test when neither B<-text> nor B<-url> are set when running C<03.method-new.t>
-against Win32::GUI v1.0 results in a warning: C<< Use of uninitialized value in
-subroutine entry at C:/Perl/site/lib/Win32/GUI.pm line 597, <DATA> line 164. >>.
-
-C<99.pod-coverage.t> results in the warning:
-C<< Too late to run INIT block at C:/Perl/site/lib/Win32/API/Type.pm line 71. >>
-
-The tests do not cover any actual GUI interaction.
-
 =head1 ACKNOWLEDGEMENTS
 
 Many thanks to the Win32::GUI developers at
@@ -639,39 +494,11 @@ L<http://www.codeguru.com/Cpp/controls/staticctrl/article.php/c5803/>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005 Robert May, All Rights Reserved.
+Copyright 2005..2009 Robert May, All Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
-
-######################################################################
-# Private _get_hand_cursor()
-# Alternative to the standard windows hand cursor, that we use if
-# we don't have access to the windows one: It's not available on
-# Win95; we may not have access to LoadCursor();
-######################################################################
-sub _get_hand_cursor
-{
-  # don't use Win32::GUI::Bitmap unless it is available
-  BEGIN { eval "use Win32::GUI::BitmapInline 0.02"; };
-
-  # if we already created a cursor object, then use it
-  return $_hand_cursor if defined $_hand_cursor;
-
-  return undef unless defined $Win32::GUI::BitmapInline::VERSION;
-
-  $_hand_cursor = newCursor Win32::GUI::BitmapInline( q(
-    AAACAAEAICAAAAUAAAAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAgAAAAAAAAAAAAAAAAAAA
-    AAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    A/wAAAP8AAAH/gAAB/4AAA/+AAAP/wAAH/8AABf/AAA3/wAAd/8AAGf7AAAG2wAABtoAAAbYAAAG
-    wAAABgAAAAYAAAAGAAAABgAAAAYAAAAAAAAA////////////////////////////////////////
-    //////////////gB///4Af//+AH///AA///wAP//4AD//+AAf//AAH//wAB//4AAf/8AAH//AAB/
-    /xAAf//wAP//8AH///AH///wP///8P////D////w////8P////n///8=
-    ) );
-
-  return $_hand_cursor;
-}
 
 1; # End of Win32::GUI::HyperLink

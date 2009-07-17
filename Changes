@@ -1,6 +1,15 @@
 Revision history for Win32-GUI-HyperLink
 
-0.13     24 Aprl 2005
+0.14     17 July 2009
+         Released on CPAN.
+
+- Moved source in to Git at Github:
+  http://github.com/remay/perl-win32-gui-hyperlink/tree/master
+- Now depends on Win32::GUI 1.02, which removes all the other
+  dependencies.
+
+
+0.13     24 April 2005
          Released on CPAN, and at http://www.robmay.me.uk/win32gui/
          as PPM
 

@@ -13,4 +13,3 @@ t/05.method-Launch.t
 t/98.pod.t
 t/99.pod-coverage.t
 TODO
-META.yml                                 Module meta-data (added by MakeMaker)

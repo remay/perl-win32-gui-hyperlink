@@ -6,9 +6,3 @@ TODO:
 - Where should we warn about missing functionality?  Module itself
   or test suite or at installation.  Test and installation don't
   seem good for PPM distributions.
-
-- Can we get CVS to update the VERSION in README file?
-- Add postamble to Makefile.PL to automate make of PPM distribution
-
-----------------------------------------------------------------------
-$Id: TODO,v 1.4 2005/04/24 17:29:07 Robert May Exp $
